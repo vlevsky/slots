@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slot Machine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .slot-machine {
+            margin: 50px auto;
+            padding: 20px;
+            width: 300px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .reels {
+            display: flex;
+            justify-content: center;
+        }
+        .reel {
+            width: 80px;
+            height: 80px;
+            margin: 10px;
+            font-size: 36px;
+            line-height: 80px;
+            background: #ddd;
+            border-radius: 5px;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            background: #28a745;
+            color: white;
+            border-radius: 5px;
+        }
+        .balance {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .payout-key {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slot-machine">
+        <div class="balance">Balance: $<span id="balance">1000</span></div>
+        <input type="number" id="bet" placeholder="Enter bet amount" min="1" max="1000">
+        <div class="reels">
+            <div class="reel" id="reel1">🍒</div>
+            <div class="reel" id="reel2">🍋</div>
+            <div class="reel" id="reel3">🍊</div>
+        </div>
+        <button onclick="spin()">Spin</button>
+        <div id="message"></div>
+        <div class="payout-key">
+            <p>Payout Key:</p>
+            <p>2 matching symbols: 1.5x your bet</p>
+            <p>3 matching symbols: 10x your bet</p>
+        </div>
+    </div>
+
+    <script>
+        let balance = 1000;
+
+        function spin() {
+            const bet = parseInt(document.getElementById("bet").value);
+            if (isNaN(bet) || bet <= 0 || bet > balance) {
+                document.getElementById("message").textContent = "Invalid bet amount!";
+                return;
+            }
+
+            balance -= bet;
+            const symbols = ["🍒", "🍋", "🍊", "🍉", "🍇"];
+            let reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")];
+            let results = [];
+            let spinTime = 1000;
+            let interval = 100;
+            let elapsed = 0;
+            let spinInterval = setInterval(() => {
+                for (let i = 0; i < reels.length; i++) {
+                    reels[i].textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                }
+                elapsed += interval;
+                if (elapsed >= spinTime) {
+                    clearInterval(spinInterval);
+                    results = [
+                        symbols[Math.floor(Math.random() * symbols.length)],
+                        symbols[Math.floor(Math.random() * symbols.length)],
+                        symbols[Math.floor(Math.random() * symbols.length)]
+                    ];
+                    reels[0].textContent = results[0];
+                    reels[1].textContent = results[1];
+                    reels[2].textContent = results[2];
+                    evaluateResults(results, bet);
+                }
+            }, interval);
+        }
+
+        function evaluateResults(results, bet) {
+            let winnings = 0;
+            if (results[0] === results[1] && results[1] === results[2]) {
+                winnings = bet * 10;
+                document.getElementById("message").textContent = "🎉 Jackpot! You win $" + winnings + "! 🎉";
+            } else if (results[0] === results[1] || results[1] === results[2] || results[0] === results[2]) {
+                winnings = Math.floor(bet * 1.5);
+                document.getElementById("message").textContent = "✨ You matched 2! You win $" + winnings + "! ✨";
+            } else {
+                document.getElementById("message").textContent = "Try Again!";
+            }
+            balance += winnings;
+            document.getElementById("balance").textContent = balance;
+        }
+    </script>
+</body>
+</html>

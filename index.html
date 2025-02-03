@@ -71,7 +71,7 @@
         <div class="payout-key">
             <p>Payout Key:</p>
             <p>2 matching symbols: 1.5x your bet</p>
-            <p>3 matching symbols: 10x your bet</p>
+            <p>3 matching symbols: 12x your bet</p>
         </div>
     </div>
 
@@ -115,7 +115,7 @@
         function evaluateResults(results, bet) {
             let winnings = 0;
             if (results[0] === results[1] && results[1] === results[2]) {
-                winnings = bet * 10;
+                winnings = bet * 12;
                 document.getElementById("message").textContent = "🎉 Jackpot! You win $" + winnings + "! 🎉";
             } else if (results[0] === results[1] || results[1] === results[2] || results[0] === results[2]) {
                 winnings = Math.floor(bet * 1.5);

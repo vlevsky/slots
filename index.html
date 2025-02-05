@@ -31,7 +31,7 @@
             background: #ddd;
             border-radius: 5px;
         }
-        #message {
+        #message, #hardMessage {
             margin-top: 20px;
             font-size: 20px;
             font-weight: bold;
@@ -46,6 +46,7 @@
             color: white;
             border-radius: 5px;
         }
+        .all-in { background: orange; font-size: 12px; padding: 5px 10px; }
         .balance {
             font-size: 20px;
             font-weight: bold;
@@ -61,6 +62,7 @@
     <div class="slot-machine">
         <div class="balance">Balance: $<span id="balance">1000</span></div>
         <input type="number" id="bet" placeholder="Enter bet amount" min="1" max="1000">
+        <button class="all-in" onclick="betAll('bet')">All In</button>
         <div class="reels">
             <div class="reel" id="reel1">🍒</div>
             <div class="reel" id="reel2">🍋</div>
@@ -75,20 +77,55 @@
         </div>
     </div>
 
+    <div class="slot-machine">
+        <h2>Hard Slots Mode</h2>
+        <div class="balance">Balance: $<span id="balance">1000</span></div>
+        <input type="number" id="hardBet" placeholder="Enter bet amount" min="1" max="1000">
+        <button class="all-in" onclick="betAll('hardBet')">All In</button>
+        <div class="reels">
+            <div class="reel" id="hardReel1">🍒</div>
+            <div class="reel" id="hardReel2">🍋</div>
+            <div class="reel" id="hardReel3">🍊</div>
+            <div class="reel" id="hardReel4">🍉</div>
+            <div class="reel" id="hardReel5">🍇</div>
+        </div>
+        <button onclick="hardSpin()">Spin</button>
+        <div id="hardMessage"></div>
+        <div class="payout-key">
+            <p>Payout Key:</p>
+            <p>3 matching symbols: 2x your bet</p>
+            <p>4 matching symbols: 10x your bet</p>
+            <p>5 matching symbols: 50x your bet</p>
+        </div>
+    </div>
+
     <script>
         let balance = 1000;
 
         function spin() {
-            const bet = parseInt(document.getElementById("bet").value);
+            playSlots(3, "bet", "reel", "message", [[3, 12], [2, 1.5]]);
+        }
+        
+        function hardSpin() {
+            playSlots(5, "hardBet", "hardReel", "hardMessage", [[5, 50], [4, 10], [3, 2]]);
+        }
+        
+        function playSlots(reelCount, betId, reelIdPrefix, messageId, payoutLevels) {
+            const bet = parseInt(document.getElementById(betId).value);
             if (isNaN(bet) || bet <= 0 || bet > balance) {
-                document.getElementById("message").textContent = "Invalid bet amount!";
+                document.getElementById(messageId).textContent = "Invalid bet amount!";
                 return;
             }
-
+            
             balance -= bet;
+            document.querySelectorAll("#balance").forEach(el => el.textContent = balance);
             const symbols = ["🍒", "🍋", "🍊", "🍉", "🍇"];
-            let reels = [document.getElementById("reel1"), document.getElementById("reel2"), document.getElementById("reel3")];
             let results = [];
+            let reels = [];
+            for (let i = 1; i <= reelCount; i++) {
+                reels.push(document.getElementById(reelIdPrefix + i));
+            }
+            
             let spinTime = 1000;
             let interval = 100;
             let elapsed = 0;
@@ -99,32 +136,32 @@
                 elapsed += interval;
                 if (elapsed >= spinTime) {
                     clearInterval(spinInterval);
-                    results = [
-                        symbols[Math.floor(Math.random() * symbols.length)],
-                        symbols[Math.floor(Math.random() * symbols.length)],
-                        symbols[Math.floor(Math.random() * symbols.length)]
-                    ];
-                    reels[0].textContent = results[0];
-                    reels[1].textContent = results[1];
-                    reels[2].textContent = results[2];
-                    evaluateResults(results, bet);
+                    for (let i = 0; i < reels.length; i++) {
+                        results.push(symbols[Math.floor(Math.random() * symbols.length)]);
+                        reels[i].textContent = results[i];
+                    }
+                    evaluateResults(results, bet, messageId, payoutLevels);
                 }
             }, interval);
         }
-
-        function evaluateResults(results, bet) {
+        
+        function evaluateResults(results, bet, messageId, payoutLevels) {
             let winnings = 0;
-            if (results[0] === results[1] && results[1] === results[2]) {
-                winnings = bet * 12;
-                document.getElementById("message").textContent = "🎉 Jackpot! You win $" + winnings + "! 🎉";
-            } else if (results[0] === results[1] || results[1] === results[2] || results[0] === results[2]) {
-                winnings = Math.floor(bet * 1.5);
-                document.getElementById("message").textContent = "✨ You matched 2! You win $" + winnings + "! ✨";
-            } else {
-                document.getElementById("message").textContent = "Try Again!";
+            for (let [matchCount, multiplier] of payoutLevels) {
+                let counts = {};
+                results.forEach(symbol => counts[symbol] = (counts[symbol] || 0) + 1);
+                if (Object.values(counts).includes(matchCount)) {
+                    winnings = bet * multiplier;
+                    break;
+                }
             }
             balance += winnings;
-            document.getElementById("balance").textContent = balance;
+            document.querySelectorAll("#balance").forEach(el => el.textContent = balance);
+            document.getElementById(messageId).textContent = winnings > 0 ? `🎉 You win $${winnings}! 🎉` : "Try Again!";
+        }
+
+        function betAll(betId) {
+            document.getElementById(betId).value = balance;
         }
     </script>
 </body>

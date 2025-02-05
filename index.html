@@ -93,8 +93,8 @@
         <div id="hardMessage"></div>
         <div class="payout-key">
             <p>Payout Key:</p>
-            <p>3 matching symbols: 2x your bet</p>
-            <p>4 matching symbols: 10x your bet</p>
+            <p>3 matching symbols: 2.5x your bet</p>
+            <p>4 matching symbols: 15x your bet</p>
             <p>5 matching symbols: 50x your bet</p>
         </div>
     </div>
@@ -107,7 +107,7 @@
         }
         
         function hardSpin() {
-            playSlots(5, "hardBet", "hardReel", "hardMessage", [[5, 50], [4, 10], [3, 2]]);
+            playSlots(5, "hardBet", "hardReel", "hardMessage", [[5, 50], [4, 15], [3, 2.5]]);
         }
         
         function playSlots(reelCount, betId, reelIdPrefix, messageId, payoutLevels) {

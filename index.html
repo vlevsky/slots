@@ -47,6 +47,7 @@
             border-radius: 5px;
         }
         .all-in { background: orange; font-size: 12px; padding: 5px 10px; }
+        .top-up { background: blue; font-size: 12px; padding: 5px 10px; }
         .balance {
             font-size: 20px;
             font-weight: bold;
@@ -61,6 +62,7 @@
 <body>
     <div class="slot-machine">
         <div class="balance">Balance: $<span id="balance">1000</span></div>
+        <button class="top-up" onclick="topUp()">Top-Up</button>
         <input type="number" id="bet" placeholder="Enter bet amount" min="1" max="1000">
         <button class="all-in" onclick="betAll('bet')">All In</button>
         <div class="reels">
@@ -80,6 +82,7 @@
     <div class="slot-machine">
         <h2>Hard Slots Mode</h2>
         <div class="balance">Balance: $<span id="balance">1000</span></div>
+        <button class="top-up" onclick="topUp()">Top-Up</button>
         <input type="number" id="hardBet" placeholder="Enter bet amount" min="1" max="1000">
         <button class="all-in" onclick="betAll('hardBet')">All In</button>
         <div class="reels">
@@ -144,7 +147,7 @@
                 }
             }, interval);
         }
-        
+
         function evaluateResults(results, bet, messageId, payoutLevels) {
             let winnings = 0;
             for (let [matchCount, multiplier] of payoutLevels) {
@@ -162,6 +165,13 @@
 
         function betAll(betId) {
             document.getElementById(betId).value = balance;
+        }
+
+        function topUp() {
+            if (balance < 1000) {
+                balance = 1000;
+                document.querySelectorAll("#balance").forEach(el => el.textContent = balance);
+            }
         }
     </script>
 </body>

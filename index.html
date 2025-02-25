@@ -84,7 +84,8 @@
     /* Message Display */
     #message,
     #hardMessage,
-    #extremeMessage {
+    #extremeMessage,
+    #easyMessage {
       margin-top: 20px;
       font-size: 20px;
       font-weight: bold;
@@ -150,8 +151,9 @@
   </style>
 </head>
 <body>
-  <!-- First Slot Machine -->
+  <!-- Normal Slot Machine -->
   <div class="slot-machine">
+    <h2>Normal Slots</h2>
     <div class="balance">Balance: $<span id="balance">1000</span></div>
     <button class="top-up" onclick="topUp()">Top-Up</button>
     <br />
@@ -171,6 +173,26 @@
     </div>
   </div>
 
+  <!-- Easy Slots Mode -->
+  <div class="slot-machine">
+    <h2>Easy Slots</h2>
+    <div class="balance">Balance: $<span id="balance">1000</span></div>
+    <button class="top-up" onclick="topUp()">Top-Up</button>
+    <br />
+    <input type="number" id="easyBet" placeholder="Enter bet amount" min="1" max="1000" />
+    <button class="all-in" onclick="betAll('easyBet')">All In</button>
+    <div class="reels">
+      <div class="reel" id="easyReel1">🍓</div>
+      <div class="reel" id="easyReel2">🍭</div>
+    </div>
+    <button onclick="easySpin()">Spin</button>
+    <div id="easyMessage"></div>
+    <div class="payout-key">
+      <p><strong>Payout Key:</strong></p>
+      <p>2 matching symbols: 1.6x your bet</p>
+    </div>
+  </div>
+
   <!-- Hard Slots Mode -->
   <div class="slot-machine">
     <h2>Hard Slots Mode</h2>
@@ -181,7 +203,7 @@
     <button class="all-in" onclick="betAll('hardBet')">All In</button>
     <div class="reels">
       <div class="reel" id="hardReel1">🍒</div>
-      <div class="reel" id="hardReel2">🍋</div>
+      <div class="reel" id="hardReel2">🍭</div>
       <div class="reel" id="hardReel3">🍊</div>
       <div class="reel" id="hardReel4">🍉</div>
       <div class="reel" id="hardReel5">🍇</div>
@@ -226,6 +248,39 @@
     </div>
   </div>
 
+  <!-- Impossible Slots Mode -->
+  <div class="slot-machine extreme-slot-machine">
+    <h2>Impossible Slots</h2>
+    <div class="balance">Balance: $<span id="balance">1000</span></div>
+    <button class="top-up" onclick="topUp()">Top-Up</button>
+    <br />
+    <input type="number" id="impossibleBet" placeholder="Enter bet amount" min="1" max="1000" />
+    <button class="all-in" onclick="betAll('impossibleBet')">All In</button>
+    <div class="reels extreme-reels">
+      <div class="reel" id="impossibleReel1">🍏</div>
+      <div class="reel" id="impossibleReel2">🍈</div>
+      <div class="reel" id="impossibleReel3">🍌</div>
+      <div class="reel" id="impossibleReel4">🍋</div>
+      <div class="reel" id="impossibleReel5">🫐</div>
+      <div class="reel" id="impossibleReel6">🍉</div>
+      <div class="reel" id="impossibleReel7">🍑</div>
+      <div class="reel" id="impossibleReel8">🍇</div>
+      <div class="reel" id="impossibleReel9">🍓</div>
+      <div class="reel" id="impossibleReel10">🍊</div>
+    </div>
+    <button onclick="impossibleSpin()">Spin</button>
+    <div id="impossibleMessage"></div>
+    <div class="payout-key">
+      <p><strong>Payout Key:</strong></p>
+      <p>5 matching symbols: 2x your bet</p>
+      <p>6 matching symbols: 7x your bet</p>
+      <p>7 matching symbols: 40x your bet</p>
+      <p>8 matching symbols: 400x your bet</p>
+      <p>9 matching symbols: 5000x your bet</p>
+      <p>10 matching symbols: 15000x your bet</p>
+    </div>
+  </div>
+
   <script>
     let balance = 1000;
 
@@ -233,6 +288,12 @@
       playSlots(3, "bet", "reel", "message", [
         [3, 12],
         [2, 1.5],
+      ]);
+    }
+
+    function easySpin() {
+      playSlots(2, "easyBet", "easyReel", "easyMessage", [
+        [2, 1.6],
       ]);
     }
 
@@ -251,6 +312,17 @@
         [6, 15],
         [5, 7],
         [4, 1.5],
+      ]);
+    }
+
+    function impossibleSpin() {
+      playSlots(10, "impossibleBet", "impossibleReel", "impossibleMessage", [
+        [10, 15000],
+        [9, 5000],
+        [8, 400],
+        [7, 40],
+        [6, 7],
+        [5, 2],
       ]);
     }
 
@@ -318,48 +390,5 @@
       }
     }
   </script>
-  <!-- Impossible Slots Mode -->
-<div class="slot-machine extreme-slot-machine">
-  <h2>Impossible Slots</h2>
-  <div class="balance">Balance: $<span id="balance">1000</span></div>
-  <button class="top-up" onclick="topUp()">Top-Up</button>
-  <br />
-  <input type="number" id="impossibleBet" placeholder="Enter bet amount" min="1" max="1000" />
-  <button class="all-in" onclick="betAll('impossibleBet')">All In</button>
-  <div class="reels extreme-reels">
-    <div class="reel" id="impossibleReel1">🍏</div>
-    <div class="reel" id="impossibleReel2">🍒</div>
-    <div class="reel" id="impossibleReel3">🍌</div>
-    <div class="reel" id="impossibleReel4">🍋</div>
-    <div class="reel" id="impossibleReel5">🫐</div>
-    <div class="reel" id="impossibleReel6">🍉</div>
-    <div class="reel" id="impossibleReel7">🍑</div>
-    <div class="reel" id="impossibleReel8">🍇</div>
-    <div class="reel" id="impossibleReel9">🍓</div>
-    <div class="reel" id="impossibleReel10">🍊</div>
-  </div>
-  <button onclick="impossibleSpin()">Spin</button>
-  <div id="impossibleMessage"></div>
-  <div class="payout-key">
-    <p><strong>Payout Key:</strong></p>
-    <p>5 matching symbols: 2x your bet</p>
-    <p>6 matching symbols: 7x your bet</p>
-    <p>7 matching symbols: 40x your bet</p>
-    <p>8 matching symbols: 400x your bet</p>
-    <p>9 matching symbols: 5000x your bet</p>
-    <p>10 matching symbols: 15000x your bet</p>
-  </div>
-  <script>
-  function impossibleSpin() {
-    playSlots(10, "impossibleBet", "impossibleReel", "impossibleMessage", [
-      [10, 15000],
-      [9, 5000],
-      [8, 400],
-      [7, 40],
-      [6, 7],
-      [5, 2],
-    ]);
-  }</script>
-</div>
 </body>
 </html>

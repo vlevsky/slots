@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Queen Slots</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      background: radial-gradient(circle at top center, #4b0082, #000);
+      color: #fff;
+      padding: 20px;
+      margin: 0;
+    }
+    .slot-machine {
+      margin: 50px auto;
+      padding: 20px;
+      width: 90%;
+      max-width: 600px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .balance {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #ffd700;
+    }
+    input[type="number"] {
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 50%;
+      margin: 10px 0;
+    }
+    button {
+      margin: 10px 5px;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+      border: none;
+      background: linear-gradient(145deg, #8a2be2, #4b0082);
+      color: #fff;
+      border-radius: 5px;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+    .top-up {
+      background: linear-gradient(145deg, #9370db, #663399);
+    }
+    .home-button {
+      background: linear-gradient(145deg, #ff9800, #e68900);
+    }
+    /* Reel Container Grid */
+    .reels {
+      display: grid;
+      grid-template-columns: repeat(4, 80px); /* 4 columns */
+      grid-template-rows: repeat(3, 80px); /* 3 rows */
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .reel {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(145deg, #444, #222);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .reel img {
+      width: 70px;
+      height: 70px;
+    }
+    .payout-key {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #ddd;
+      text-align: left;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .payout-key p {
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="slot-machine">
+    <div class="balance">Balance: $<span id="balance">1000</span></div>
+    <button class="top-up" onclick="topUp()">Top-Up</button>
+    <br />
+    <input type="number" id="bet" placeholder="Enter bet amount" min="1" max="1000" />
+    <button onclick="spin()">Spin</button>
+    <button class="home-button" onclick="goHome()">Go Home</button>
+    <div class="reels" id="reels"></div>
+    <div id="message"></div>
+    <div class="payout-key">
+        <p><strong>Payout Key:</strong></p>
+        <p>12 matching symbols: 1,000,000x your bet (JACKPOT!)</p>
+        <p>11 matching symbols: 500,000x your bet</p>
+        <p>10 matching symbols: 250,000x your bet</p>
+        <p>9 matching symbols: 100,000x your bet</p>
+        <p>8 matching symbols: 50,000x your bet</p>
+        <p>7 matching symbols: 10,000x your bet</p>
+        <p>6 matching symbols: 2,500x your bet</p>
+        <p>5 matching symbols: 15x your bet</p>
+        <p>4 matching symbols: 2x your bet</p>
+      </div>
+  </div>
+
+  <script>
+    let balance = 1000;
+    const images = [
+      "images/crown.png",
+      "images/scepter.png",
+      "images/throne.png",
+      "images/jewel.png",
+      "images/queen.png",
+      "images/castle.png",
+      "images/sword.png",
+      "images/shield.png",
+      "images/diamond.png",
+      "images/gold.png",
+      "images/mansion.png",
+      "images/guard.png"
+    ];
+
+    function spin() {
+      const bet = parseInt(document.getElementById("bet").value);
+      if (isNaN(bet) || bet <= 0 || bet > balance) {
+        document.getElementById("message").textContent = "Invalid bet amount!";
+        return;
+      }
+      
+      balance -= bet;
+      document.getElementById("balance").textContent = balance;
+      document.getElementById("message").textContent = "";
+      
+      const reelsContainer = document.getElementById("reels");
+      reelsContainer.innerHTML = ""; // clear previous reels
+      
+      const reelElements = []; // to store the image elements for updating
+      // Create 12 reel elements (4 columns x 3 rows)
+      for (let i = 0; i < 12; i++) {
+        const reelDiv = document.createElement("div");
+        reelDiv.className = "reel";
+        const img = document.createElement("img");
+        // Set an initial random image
+        img.src = images[Math.floor(Math.random() * images.length)];
+        reelDiv.appendChild(img);
+        reelsContainer.appendChild(reelDiv);
+        reelElements.push(img);
+      }
+      
+      // Spin animation: update images every 100ms
+      const spinTime = 2000; // total spin time in ms
+      const intervalTime = 100;
+      let elapsed = 0;
+      const spinInterval = setInterval(() => {
+        reelElements.forEach(img => {
+          img.src = images[Math.floor(Math.random() * images.length)];
+        });
+        elapsed += intervalTime;
+        if (elapsed >= spinTime) {
+          clearInterval(spinInterval);
+          // Set final images and record the results
+          const results = [];
+          reelElements.forEach(img => {
+            const finalSymbol = images[Math.floor(Math.random() * images.length)];
+            img.src = finalSymbol;
+            results.push(finalSymbol);
+          });
+          evaluateResults(results, bet);
+        }
+      }, intervalTime);
+    }
+
+    function evaluateResults(results, bet) {
+      // Count how many times each symbol appears
+      const counts = {};
+      results.forEach(symbol => {
+        counts[symbol] = (counts[symbol] || 0) + 1;
+      });
+      const bestMatch = Math.max(...Object.values(counts)); 
+      const payoutLevels = [
+        [12, 1000000],
+        [11, 500000],
+        [10, 250000],
+        [9, 100000],
+        [8, 50000],
+        [7, 10000],
+        [6, 2500],
+        [5, 15],
+        [4, 2]
+      ];
+      
+      let winnings = 0;
+      for (const [required, multiplier] of payoutLevels) {
+        if (bestMatch >= required) {
+          winnings = bet * multiplier;
+          break;
+        }
+      }
+      
+      balance += winnings;
+      document.getElementById("balance").textContent = balance;
+      document.getElementById("message").textContent = 
+        winnings > 0 ? `🎉 You win $${winnings}! 🎉` : "Try Again!";
+    }
+
+    function topUp() {
+      if (balance < 1000) {
+        balance = 1000;
+        document.getElementById("balance").textContent = balance;
+      }
+    }
+
+    function goHome() {
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>

@@ -139,3 +139,11 @@ body {
     font-size: 24px;
     margin-bottom: 20px;
   }
+code for buttons:
+  .special-slot-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    border-radius: 10px;
+    padding: 10px;
+  }
